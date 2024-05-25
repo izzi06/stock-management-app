@@ -1,147 +1,83 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+// ignore_for_file: use_key_in_widget_constructors
+
+import 'dart:js_interop';
+
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'add_record_page.dart';
+import 'update_record_page.dart';
+import 'delete_record_page.dart';
+import 'display_records_page.dart';
 
-void main() async {
+void main() async{
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: const FirebaseOptions(
-      apiKey: "YOUR_API_KEY",
-      projectId: "amozo-stock-manager",
+      apiKey: 'AIzaSyBrmANvNANnXvtm2NneEhOgQ2d7H5m4ZYs', 
+      appId: "1:1012122325118:web:e38d657d1ab35e53da482f", 
       messagingSenderId: "1012122325118",
-      appId: "1:1012122325118:web:e38d657d1ab35e53da482f",
-    ),
+       projectId: "amozo-stock-manager")
   );
-  runApp(const MyWidget());
+  runApp(MyApp());
 }
 
-class MyWidget extends StatefulWidget {
-  const MyWidget({Key? key}) : super(key: key);
-
-  @override
-  State<MyWidget> createState() => _MyWidgetState();
-}
-
-class _MyWidgetState extends State<MyWidget> {
-  final TextEditingController _asinController = TextEditingController();
-  final TextEditingController _stockController = TextEditingController();
-
-  Future<bool> _recordAlreadyExists(String asin) async {
-    try {
-      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
-          .collection("products")
-          .where('asin', isEqualTo: asin)
-          .get();
-      return querySnapshot.docs.isNotEmpty; // will return true if a document exists.
-    } catch (e) {
-      print("Error checking product existence: $e");
-      return false;
-    }
-  }
-
-  Future<void> _addRecord(BuildContext context) async {
-    String asin = _asinController.text;
-    String stock = _stockController.text;
-
-    if (asin.isNotEmpty && stock.isNotEmpty) {
-      int? stockValue = int.tryParse(stock);
-
-      if (stockValue != null) {
-        bool productExists = await _recordAlreadyExists(asin);
-        if (productExists) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text("ASIN already exists, try another one.")),
-          );
-        } else {
-          try {
-            await FirebaseFirestore.instance.collection('products').add({
-              'asin': asin,
-              'stock': stockValue,
-            });
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text("Record added successfully")),
-            );
-          } catch (e) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text("Error adding record: $e")),
-            );
-          }
-        }
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Please enter a valid stock value.")),
-        );
-      }
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-            content: Text(
-                "Please enter both values, at least one of the fields is empty.")),
-      );
-    }
-  }
-
+class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        backgroundColor: const Color.fromARGB(255, 90, 170, 226),
-        appBar: AppBar(
-          title: const Center(
-            child: Text(
-              "Amozo Stock Manager",
-              style: TextStyle(
-                fontSize: 25,
-                color: Color.fromARGB(255, 90, 170, 226),
-                fontFamily: 'Merriweather',
-              ),
+      title: 'Stock Manager',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      initialRoute: '/',
+      routes: {
+        '/': (context) => HomePage(),
+        '/add': (context) => const AddRecordPage(),
+        '/update': (context) => const UpdateRecordPage(),
+        '/delete': (context) => const DeleteRecordPage(),
+        '/display': (context) => const DisplayRecordsPage(),
+      },
+    );
+  }
+}
+
+class HomePage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Stock Manager"),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pushNamed(context, '/add');
+              },
+              child: const Text("Add Record"),
             ),
-          ),
-          backgroundColor: Colors.black,
-        ),
-        body: Builder(
-          builder: (BuildContext context) {
-            return SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    const SizedBox(height: 100),
-                    const Text(
-                      "Enter product ASIN",
-                      style: TextStyle(fontFamily: 'Verdana'),
-                    ),
-                    TextField(
-                      controller: _asinController,
-                      decoration: const InputDecoration(
-                        hintText: "B0D26C7R2T",
-                        border: OutlineInputBorder(),
-                      ),
-                    ),
-                    const SizedBox(height: 20), // Reduced height for better spacing
-                    const Text(
-                      "Enter new stock value",
-                      style: TextStyle(fontFamily: 'Verdana'),
-                    ),
-                    TextField(
-                      controller: _stockController,
-                      decoration: const InputDecoration(
-                        hintText: "Any number you want!",
-                        border: OutlineInputBorder(),
-                      ),
-                    ),
-                    const SizedBox(height: 20), // Reduced height for better spacing
-                    ElevatedButton(
-                      onPressed: () => _addRecord(context),
-                      child: const Text("Add record"),
-                    ),
-                  ],
-                ),
-              ),
-            );
-          },
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pushNamed(context, '/update');
+              },
+              child: const Text("Update Record"),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pushNamed(context, '/delete');
+              },
+              child: const Text("Delete Record"),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pushNamed(context, '/display');
+              },
+              child: const Text("Display Records"),
+            ),
+          ],
         ),
       ),
     );
