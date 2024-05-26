@@ -26,8 +26,7 @@ class DeleteRecordPage extends StatefulWidget {
 
 class _DeleteRecordPageState extends State<DeleteRecordPage> {
   final TextEditingController _asinController = TextEditingController();
-  final TextEditingController _stockController = TextEditingController();
-
+  
   Future<bool> _recordAlreadyExists(String asin) async {
     try {
       QuerySnapshot querySnapshot = await FirebaseFirestore.instance
@@ -41,46 +40,39 @@ class _DeleteRecordPageState extends State<DeleteRecordPage> {
     }
   }
 
-  Future<void> _addRecord(BuildContext context) async {
+  Future<void> _deleteRecord(BuildContext context) async {
     String asin = _asinController.text;
-    String stock = _stockController.text;
+    bool recordExists = await _recordAlreadyExists(asin);
 
-    if (asin.isNotEmpty && stock.isNotEmpty) {
-      int? stockValue = int.tryParse(stock);
+    if (recordExists) {
+      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+          .collection("products")
+          .where('asin', isEqualTo: asin)
+          .limit(1)
+          .get();
 
-      if (stockValue != null) {
-        bool productExists = await _recordAlreadyExists(asin);
-        if (productExists) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text("ASIN already exists, try another one.")),
-          );
-        } else {
-          try {
-            await FirebaseFirestore.instance.collection('products').add({
-              'asin': asin,
-              'stock': stockValue,
-            });
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text("Record added successfully")),
-            );
-          } catch (e) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text("Error adding record: $e")),
-            );
-          }
-        }
-      } else {
+          DocumentSnapshot doc = querySnapshot.docs.first;
+
+      try {
+
+        DocumentReference docRef = FirebaseFirestore.instance.collection('products').doc(doc.id);
+        await docRef.delete();
+
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Please enter a valid stock value.")),
-        );
+          const SnackBar(content: Text("Record deleted successfully")),
+         );
+
+      } catch(e) {
+        print("Error deleting, $e");
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Error adding record: $e")));
       }
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-            content: Text(
-                "Please enter both values, at least one of the fields is empty.")),
-      );
+          const SnackBar(content: Text("ASIN doesn't exist.")),
+        );
     }
+    
   }
 
   @override
@@ -136,7 +128,7 @@ class _DeleteRecordPageState extends State<DeleteRecordPage> {
                     ),*/
                     const SizedBox(height: 20), // Reduced height for better spacing
                     ElevatedButton(
-                      onPressed: () => _addRecord(context),
+                      onPressed: () => _deleteRecord(context),
                       child: const Text("Delete record"),
                     ),
                   ],

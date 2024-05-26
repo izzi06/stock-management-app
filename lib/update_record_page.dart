@@ -71,7 +71,7 @@ class _UpdateRecordPageState extends State<UpdateRecordPage> {
             DocumentReference docRef = FirebaseFirestore.instance.collection('products').doc(doc.id);
 
             await docRef.update({'stock': stockValue });
-            print('Error updating document: $e');
+           //  print('Error updating document: $e');
 
             /*await FirebaseFirestore.instance.collection('products').add({
               'asin': asin,

@@ -28,7 +28,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Stock Manager',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+      //  primarySwatch: Colors.black,
       ),
       initialRoute: '/',
       routes: {
@@ -47,36 +47,71 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Stock Manager"),
+        backgroundColor: Colors.black,
+        title: const Text("Stock Manager", style: TextStyle(color: Colors.blue, fontFamily: 'Verdana'),),
       ),
+      backgroundColor: Colors.blue,
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
+             const SizedBox(width: 20),
             ElevatedButton(
               onPressed: () {
                 Navigator.pushNamed(context, '/add');
               },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.black, 
+                foregroundColor: Colors.blue, 
+                textStyle: const TextStyle(fontFamily: 'Verdana'),
+                shadowColor: Colors.black,
+                shape: const LinearBorder()
+                ),
               child: const Text("Add Record"),
             ),
+            const SizedBox(width: 170),
             ElevatedButton(
               onPressed: () {
                 Navigator.pushNamed(context, '/update');
               },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.black, 
+                foregroundColor: Colors.blue, 
+                textStyle: const TextStyle(fontFamily: 'Verdana'),
+                shadowColor: Colors.black,
+                shape: const LinearBorder()
+                ),
               child: const Text("Update Record"),
             ),
+            const SizedBox(width: 170),
             ElevatedButton(
               onPressed: () {
                 Navigator.pushNamed(context, '/delete');
               },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.black, 
+                foregroundColor: Colors.blue, 
+                textStyle: const TextStyle(fontFamily: 'Verdana'),
+                shadowColor: Colors.black,
+                shape: const LinearBorder()
+                ),
               child: const Text("Delete Record"),
             ),
+            const SizedBox(width: 170),
             ElevatedButton(
               onPressed: () {
                 Navigator.pushNamed(context, '/display');
               },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.black, 
+                foregroundColor: Colors.blue, 
+                textStyle: const TextStyle(fontFamily: 'Verdana'),
+                shadowColor: Colors.black,
+                shape: const LinearBorder()
+                ),
               child: const Text("Display Records"),
             ),
+             const SizedBox(width: 10)
           ],
         ),
       ),
