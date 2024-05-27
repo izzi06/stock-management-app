@@ -1,4 +1,4 @@
-// ignore_for_file: use_key_in_widget_constructors
+// ignore_for_file: use_key_in_widget_constructors, unused_import
 
 import 'dart:js_interop';
 
@@ -67,7 +67,7 @@ class HomePage extends StatelessWidget {
                 shadowColor: Colors.black,
                 shape: const LinearBorder()
                 ),
-              child: const Text("Add Record"),
+              child: const Text("Add ASIN"),
             ),
             const SizedBox(width: 170),
             ElevatedButton(
@@ -81,7 +81,7 @@ class HomePage extends StatelessWidget {
                 shadowColor: Colors.black,
                 shape: const LinearBorder()
                 ),
-              child: const Text("Update Record"),
+              child: const Text("Update ASIN"),
             ),
             const SizedBox(width: 170),
             ElevatedButton(
@@ -95,7 +95,7 @@ class HomePage extends StatelessWidget {
                 shadowColor: Colors.black,
                 shape: const LinearBorder()
                 ),
-              child: const Text("Delete Record"),
+              child: const Text("Delete ASIN"),
             ),
             const SizedBox(width: 170),
             ElevatedButton(
@@ -109,7 +109,7 @@ class HomePage extends StatelessWidget {
                 shadowColor: Colors.black,
                 shape: const LinearBorder()
                 ),
-              child: const Text("Display Records"),
+              child: const Text("Display ASIN"),
             ),
              const SizedBox(width: 10)
           ],

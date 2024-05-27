@@ -97,67 +97,82 @@ Future<void> _addRecord(BuildContext context) async {
 
 
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        backgroundColor: const Color.fromARGB(255, 90, 170, 226),
-        appBar: AppBar(
-          title: const Center(
-            child: Text(
-              "Amozo Stock Manager",
-              style: TextStyle(
-                fontSize: 25,
-                color: Color.fromARGB(255, 90, 170, 226),
-                fontFamily: 'Merriweather',
-              ),
+Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.blue,
+      appBar: AppBar(
+        title: const Center(
+          child: Text(
+            "Stock Manager",
+            style: TextStyle(
+              fontSize: 25,
+              color: Colors.blue,
+              fontFamily: 'Verdana',
             ),
           ),
-          backgroundColor: Colors.black,
         ),
-        body: Builder(
-          builder: (BuildContext context) {
-            return SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    const SizedBox(height: 100),
-                    const Text(
-                      "Enter product ASIN",
-                      style: TextStyle(fontFamily: 'Verdana'),
-                    ),
-                    TextField(
-                      controller: _asinController,
-                      decoration: const InputDecoration(
-                        hintText: "B0D26C7R2T",
-                        border: OutlineInputBorder(),
-                      ),
-                    ),
-                    const SizedBox(height: 20), // Reduced height for better spacing
-                    const Text(
-                      "Enter new stock value",
-                      style: TextStyle(fontFamily: 'Verdana'),
-                    ),
-                    TextField(
-                      controller: _stockController,
-                      decoration: const InputDecoration(
-                        hintText: "Any number you want!",
-                        border: OutlineInputBorder(),
-                      ),
-                    ),
-                    const SizedBox(height: 20), // Reduced height for better spacing
-                    ElevatedButton(
-                      onPressed: () => _addRecord(context),
-                      child: const Text("Add record"),
-                    ),
-                  ],
-                ),
-              ),
-            );
+        backgroundColor: Colors.black ,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          color: Colors.white,
+          onPressed: () {
+            Navigator.pop(context);
           },
         ),
+      ),
+      body: Builder(
+        builder: (BuildContext context) {
+          return SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 100),
+                  const Text(
+                    "Enter product ASIN",
+                    style: TextStyle(fontFamily: 'Verdana', fontSize: 25),
+                  ),
+                  TextField(
+                    controller: _asinController,
+                    decoration: const InputDecoration(
+                      hintText: "B0D26C7R2T",
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                  const SizedBox(height: 20), // Reduced height for better spacing
+                  const Text(
+                    "Enter new stock value",
+                    style: TextStyle(fontFamily: 'Verdana', fontSize: 25),
+                  ),
+                  TextField(
+                    controller: _stockController,
+                    decoration: const InputDecoration(
+                      hintText: "Any number you want!",
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                  const SizedBox(height: 20), // Reduced height for better spacing
+                  ElevatedButton(
+                    onPressed: () => _addRecord(context),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.black,
+                      foregroundColor: Colors.blue,
+                      textStyle: const TextStyle(fontFamily: 'Verdana'),
+                      shadowColor: Colors.black,
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(5),
+                        ),
+                      ),
+                    ),
+                    child: const Text("Add ASIN"),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
       ),
     );
   }

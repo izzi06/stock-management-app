@@ -1,5 +1,8 @@
-// ignore_for_file: use_super_parameters, use_build_context_synchronously
+// ignore_for_file: use_super_parameters, use_build_context_synchronously, avoid_web_libraries_in_flutter, unused_import
 
+// ignore: duplicate_ignore
+// ignore: unused_import
+import 'dart:html';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -24,10 +27,9 @@ class DisplayRecordsPage extends StatefulWidget {
   State<DisplayRecordsPage> createState() => _DisplayRecordsPageState();
 }
 
-class _DisplayRecordsPageState extends State<DisplayRecordsPage> {
+ class _DisplayRecordsPageState extends State<DisplayRecordsPage> {
   final TextEditingController _asinController = TextEditingController();
-  final TextEditingController _stockController = TextEditingController();
-
+  String outputText = '';
   Future<bool> _recordAlreadyExists(String asin) async {
     try {
       QuerySnapshot querySnapshot = await FirebaseFirestore.instance
@@ -36,51 +38,42 @@ class _DisplayRecordsPageState extends State<DisplayRecordsPage> {
           .get();
       return querySnapshot.docs.isNotEmpty; // will return true if a document exists.
     } catch (e) {
-      print("Error checking product existence: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text("Error showing stock: $e")),
+            );
       return false;
     }
   }
 
-  Future<void> _addRecord(BuildContext context) async {
+  Future<void> _displayRecord(BuildContext context) async {
     String asin = _asinController.text;
-    String stock = _stockController.text;
+    bool asinExists = await _recordAlreadyExists(asin);
 
-    if (asin.isNotEmpty && stock.isNotEmpty) {
-      int? stockValue = int.tryParse(stock);
-
-      if (stockValue != null) {
-        bool productExists = await _recordAlreadyExists(asin);
-        if (productExists) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text("ASIN already exists, try another one.")),
-          );
-        } else {
-          try {
-            await FirebaseFirestore.instance.collection('products').add({
-              'asin': asin,
-              'stock': stockValue,
-            });
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text("Record added successfully")),
-            );
-          } catch (e) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text("Error adding record: $e")),
-            );
-          }
-        }
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Please enter a valid stock value.")),
-        );
+    if (asinExists) {
+      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+          .collection("products")
+          .where('asin', isEqualTo: asin)
+          .limit(1)
+          .get();
+      DocumentSnapshot doc = querySnapshot.docs.first;
+      
+      try {
+        String stockValue = doc.get('stock').toString();
+        setState(() {
+          outputText = "Stock => $stockValue";
+        });
+      } catch(e) {
+         setState(() {
+           outputText = "Problem with the code -> $e";
+         });
       }
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-            content: Text(
-                "Please enter both values, at least one of the fields is empty.")),
-      );
+
+    }else {
+      setState(() {
+        outputText = "ASIN not found";
+      });
     }
+   
   }
 
   @override
@@ -88,15 +81,22 @@ class _DisplayRecordsPageState extends State<DisplayRecordsPage> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
-        backgroundColor: const Color.fromARGB(255, 90, 170, 226),
+        backgroundColor:  Colors.blue,
         appBar: AppBar(
+          leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          color: Colors.white,
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
           title: const Center(
             child: Text(
               "Amozo Stock Manager",
               style: TextStyle(
                 fontSize: 25,
-                color: Color.fromARGB(255, 90, 170, 226),
-                fontFamily: 'Merriweather',
+                color: Colors.blue,
+                fontFamily: 'Verdana',
               ),
             ),
           ),
@@ -113,7 +113,7 @@ class _DisplayRecordsPageState extends State<DisplayRecordsPage> {
                     const SizedBox(height: 100),
                     const Text(
                       "Enter product ASIN",
-                      style: TextStyle(fontFamily: 'Verdana'),
+                      style: TextStyle(fontFamily: 'Verdana', fontSize: 25),
                     ),
                     TextField(
                       controller: _asinController,
@@ -123,7 +123,7 @@ class _DisplayRecordsPageState extends State<DisplayRecordsPage> {
                       ),
                     ),
                     const SizedBox(height: 20), // Reduced height for better spacing
-                    const Text(
+                   /* const Text(
                       "Enter new stock value",
                       style: TextStyle(fontFamily: 'Verdana'),
                     ),
@@ -133,13 +133,22 @@ class _DisplayRecordsPageState extends State<DisplayRecordsPage> {
                         hintText: "Any number you want!",
                         border: OutlineInputBorder(),
                       ),
-                    ),
+                    ),*/
                     const SizedBox(height: 20), // Reduced height for better spacing
                     ElevatedButton(
-                      onPressed: () => _addRecord(context),
-                      child: const Text("Add record"),
+                      onPressed: () => _displayRecord(context),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.black, 
+                        foregroundColor: Colors.blue, 
+                        textStyle: const TextStyle(fontFamily: 'Verdana'),
+                        shadowColor: Colors.black,
+                        shape: const LinearBorder()
+                        ),
+                      child: const Text("Show Stock"),
                     ),
-                  ],
+                    const SizedBox(height: 200),
+                    Text(outputText, style: const TextStyle(fontFamily: 'Verdana', fontSize: 25),),
+                   ],
                 ),
               ),
             );
@@ -149,3 +158,10 @@ class _DisplayRecordsPageState extends State<DisplayRecordsPage> {
     );
   }
 }
+
+
+  @override
+  Widget build(BuildContext context) {
+    // TODO: implement build
+    throw UnimplementedError();
+  }

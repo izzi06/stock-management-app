@@ -1,4 +1,4 @@
-// ignore_for_file: use_super_parameters, use_build_context_synchronously
+// ignore_for_file: use_super_parameters, use_build_context_synchronously, unused_import 
 
 import 'dart:math';
 
@@ -105,15 +105,22 @@ class _UpdateRecordPageState extends State<UpdateRecordPage> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
-        backgroundColor: const Color.fromARGB(255, 90, 170, 226),
+        backgroundColor: Colors.blue,
         appBar: AppBar(
+          leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          color: Colors.white,
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
           title: const Center(
             child: Text(
               "Amozo Stock Manager",
               style: TextStyle(
                 fontSize: 25,
-                color: Color.fromARGB(255, 90, 170, 226),
-                fontFamily: 'Merriweather',
+                color: Colors.blue,
+                fontFamily: 'Verdana',
               ),
             ),
           ),
@@ -130,7 +137,7 @@ class _UpdateRecordPageState extends State<UpdateRecordPage> {
                     const SizedBox(height: 100),
                     const Text(
                       "Enter product ASIN",
-                      style: TextStyle(fontFamily: 'Verdana'),
+                      style: TextStyle(fontFamily: 'Verdana', fontSize: 25),
                     ),
                     TextField(
                       controller: _asinController,
@@ -142,7 +149,7 @@ class _UpdateRecordPageState extends State<UpdateRecordPage> {
                     const SizedBox(height: 20), // Reduced height for better spacing
                     const Text(
                       "Enter new stock value",
-                      style: TextStyle(fontFamily: 'Verdana'),
+                      style: TextStyle(fontFamily: 'Verdana', fontSize: 25),
                     ),
                     TextField(
                       controller: _stockController,
@@ -154,7 +161,14 @@ class _UpdateRecordPageState extends State<UpdateRecordPage> {
                     const SizedBox(height: 20), // Reduced height for better spacing
                     ElevatedButton(
                       onPressed: () => _UpdateRecord(context),
-                      child: const Text("Update record"),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.black, 
+                        foregroundColor: Colors.blue, 
+                        textStyle: const TextStyle(fontFamily: 'Verdana'),
+                        shadowColor: Colors.black,
+                        shape: const LinearBorder()
+                      ),
+                      child: const Text("Update ASIN"),
                     ),
                   ],
                 ),
